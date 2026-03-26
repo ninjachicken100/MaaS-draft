@@ -1,0 +1,24 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: maas-qwen3-06b-access
+  namespace: llm
+rules:
+  - apiGroups: ["serving.kserve.io"]
+    resources: ["llminferenceservices"]
+    resourceNames: ["qwen-qwen3-06b"]   # namePrefix(qwen-) + model name(qwen3-06b)
+    verbs: ["post"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: maas-qwen3-06b-access
+  namespace: llm
+subjects:
+  - kind: ServiceAccount
+    name: kubeadmin-cffa0fee
+    namespace: maas-default-gateway-tier-free
+roleRef:
+  kind: Role
+  name: maas-qwen3-06b-access
+  apiGroup: rbac.authorization.k8s.io

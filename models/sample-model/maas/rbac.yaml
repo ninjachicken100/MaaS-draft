@@ -1,0 +1,24 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: maas-single-node-no-scheduler-nvidia-gpu-access
+  namespace: llm
+rules:
+  - apiGroups: ["serving.kserve.io"]
+    resources: ["llminferenceservices"]
+    resourceNames: ["qwen3-single-node-no-scheduler-nvidia-gpu"]   # namePrefix(qwen3-) + model name
+    verbs: ["post"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: maas-single-node-no-scheduler-nvidia-gpu-access
+  namespace: llm
+subjects:
+  - kind: ServiceAccount
+    name: kubeadmin-cffa0fee
+    namespace: maas-default-gateway-tier-free
+roleRef:
+  kind: Role
+  name: maas-single-node-no-scheduler-nvidia-gpu-access
+  apiGroup: rbac.authorization.k8s.io

@@ -1,0 +1,16 @@
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSSubscription
+metadata:
+  name: single-node-no-scheduler-nvidia-gpu-subscription   # namePrefix(qwen3-) → qwen3-single-node-no-scheduler-nvidia-gpu-subscription
+  namespace: models-as-a-service
+spec:
+  owner:
+    groups:
+      - name: system:authenticated
+    users: []
+  modelRefs:
+    - name: qwen3-single-node-no-scheduler-nvidia-gpu   # final MaaSModelRef name after namePrefix
+      namespace: llm
+      tokenRateLimits:
+        - limit: 100
+          window: 1m
