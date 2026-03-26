@@ -1,4 +1,4 @@
-# qwen3-06b Model Deployment Overview
+# MaaS Deployment Overview
 
 ## Pod Roles
 
