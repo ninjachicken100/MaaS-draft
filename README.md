@@ -66,15 +66,18 @@ maas-default-gateway (Envoy/Istio)               [openshift-ingress]
   │  Terminates TLS.
   │  Calls Authorino to enforce gateway-auth-policy:
   │
-  │  Step 1 — TokenReview (via Authorino)
-  │    Validates the JWT against Kubernetes API.
-  │    Token must have audience: maas-default-gateway-sa.
-  │    (Tokens from POST /maas-api/v1/api-keys satisfy this.)
+  │  Step 1 — auth-service → Authorino
+  │    TokenReview + SubjectAccessReview
+  │    Also: calls /v1/tiers/lookup to resolve tier (metadata step)
+  │    If fails → 403
   │
-  │  Step 2 — SubjectAccessReview (via Authorino)
-  │    Checks if the JWT's ServiceAccount can verb:post
-  │    on llminferenceservices/qwen-qwen3-06b in namespace llm.
-  │    Granted by maas/rbac.yaml (Role + RoleBinding).
+  │  Step 2 — ratelimit-check-service → Limitador
+  │    Checks: does this userid still have token budget remaining?
+  │    Counter key: auth.identity.userid
+  │    Scope: llm/qwen-qwen3-06b-kserve-route
+  │    hits_addend: "0"  (read-only check, no decrement yet)
+  │    failureMode: allow  (if Limitador is down, request passes)
+  │    If over quota → 429
   │
   │  If both pass → forwards to HTTPRoute.
   │  If either fails → returns 403.
