@@ -87,7 +87,18 @@ HTTPRoute: qwen-qwen3-06b-kserve-route            [llm]
   │
   │  Created automatically by kserve-controller-manager.
   │  Maps /llm/qwen-qwen3-06b/* → vLLM service.
+  │  HTTPRoute → vLLM (request forwarded)
   │
+  ▼
+Response comes back through Envoy
+  │
+  │  Step 3 — ratelimit-report-service → Limitador  ← MISSING FROM README
+  │    Reports: responseBodyJSON("/usage/total_tokens")
+  │    Reads actual token count from vLLM response body
+  │    Decrements the user's budget by real usage (not estimated)
+  │
+  ▼
+Response returned to client
   ▼
 qwen-qwen3-06b-kserve pod (vLLM)                 [llm]
   │
