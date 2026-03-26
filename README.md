@@ -98,8 +98,6 @@ Response comes back through Envoy
   │    Decrements the user's budget by real usage (not estimated)
   │
   ▼
-Response returned to client
-  ▼
 qwen-qwen3-06b-kserve pod (vLLM)                 [llm]
   │
   │  Serves the model over HTTPS on port 8000.
